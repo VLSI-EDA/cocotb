@@ -44,7 +44,9 @@ ARCH?=$(shell uname -m)
 export ARCH
 
 OS=$(shell uname)
-ifneq (, $(findstring MINGW, $(OS)))
+ifneq (, $(findstring MINGW64, $(OS)))
+OS=Msys2
+else ifneq (, $(findstring MINGW, $(OS)))
 OS=Msys
 else ifneq (, $(findstring MSYS, $(OS)))
 OS=Msys
@@ -71,6 +73,8 @@ GXX_ARGS	+= -g -DDEBUG -fpic
 GCC_ARGS	:= $(GXX_ARGS)
 else ifeq ($(OS),Msys)
 GXX_ARGS 	+= -g -DDEBUG -shared
+else ifeq ($(OS),Msys2)
+GXX_ARGS 	+= -g -DDEBUG -shared
 ifeq ($(ARCH),x86_64)
 GXX_ARGS  += -DMS_WIN64
 endif
@@ -91,6 +95,9 @@ SO_LINKER_ARGS := -shared -undefined suppress -flat_namespace -L$(PYTHON_LIBDIR)
 else ifeq ($(OS),Linux)
 SO_LINKER_ARGS := -shared -Xlinker -L$(PYTHON_LIBDIR)
 else ifeq ($(OS),Msys)
+SO_LINKER_ARGS :=  -shared -Wl,-no-undefined -Wl,-enable-runtime-pseudo-reloc-v2 \
+			-Wl,--enable-auto-import -L$(PYTHON_LIBDIR)
+else ifeq ($(OS),Msys2)
 SO_LINKER_ARGS :=  -shared -Wl,-no-undefined -Wl,-enable-runtime-pseudo-reloc-v2 \
 			-Wl,--enable-auto-import -L$(PYTHON_LIBDIR)
 else
