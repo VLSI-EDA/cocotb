@@ -86,6 +86,7 @@ $(SIM_BUILD)/runsim.do : $(VHDL_SOURCES) $(VERILOG_SOURCES) $(CUSTOM_SIM_DEPS) $
 	echo "if [file exists $(RTL_LIBRARY)] {vdel -lib $(RTL_LIBRARY) -all}" > $@
 	echo "vlib $(RTL_LIBRARY)" >> $@
 ifneq ($(VHDL_SOURCES),)    
+	echo "onerror {quit -f}" >> $@    
 	echo "vcom -work $(RTL_LIBRARY) $(VCOM_ARGS) $(VHDL_SOURCES)" >> $@    
 endif
 ifneq ($(VERILOG_SOURCES),)
