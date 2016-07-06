@@ -42,6 +42,11 @@ from cocotb.result import TestFailure, TestSuccess
 def run_test(dut):
     """Run test."""
     N = dut.N.value # read value of generic 'N' of DUT
+    dut._log.info("The type of N is {0!s}.".format(type(N))) # print type in simulator console
+    # when using FLI (QuestaSim) then N is of type <int>
+    # when using VPI (e.g. GHDL) then N is of type <BinaryValue>
+    if isinstance(N, BinaryValue): # convert type to <int> if neccesary
+        N = N.integer
     dut._log.info("The value of N is {0!s}.".format(N)) # print value in simulator console
 
     # The following is just an example why the value of the generic is important.
